@@ -1,1 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch</title>
+</head>
+<body>
+    <div class="stopwatch">
+        <div id="display">00:00:00</div>
+        <div class="buttons">
+            <button id="startStop">Start</button>
+            <button id="lap" disabled>Lap</button>
+            <button id="reset">Reset</button>
+        </div>
+        <ul id="laps"></ul>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    background: linear-gradient(45deg, #ff0099, #493240);
+    margin: 0;
+          }
+
+.stopwatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+           }
+
+#display {
+    font-size: 48px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #fff;
+    margin-bottom: 40px; 
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+        button#startStop {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        button#lap {
+            background-color: #ffa500;
+            color: white;
+        }
+
+        button#reset {
+            background-color: #f44336;
+            color: white;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            font-size: 18px;
+            color: #fff;
+            margin: 5px 0;
+        }
+    </style>
+
+    <script>
+        let startTime, updatedTime, difference, tInterval;
+        let running = false;
+        let laps = [];
+
+        const display = document.getElementById('display');
+        const startStopButton = document.getElementById('startStop');
+        const lapButton = document.getElementById('lap');
+        const resetButton = document.getElementById('reset');
+        const lapsList = document.getElementById('laps');
+
+        function startStopwatch() {
+            if (!running) {
+                startTime = new Date().getTime();
+                tInterval = setInterval(getShowTime, 1);
+                startStopButton.innerHTML = "Stop";
+                lapButton.disabled = false;
+                running = true;
+            } else {
+                clearInterval(tInterval);
+                startStopButton.innerHTML = "Start";
+                lapButton.disabled = true;
+                running = false;
+            }
+        }
+
+        function recordLap() {
+            if (running) {
+                laps.push(display.innerHTML);
+                updateLaps();
+            }
+        }
+
+        function resetStopwatch() {
+            clearInterval(tInterval);
+            running = false;
+            display.innerHTML = "00:00:00";
+            startStopButton.innerHTML = "Start";
+            lapButton.disabled = true;
+            laps = [];
+            updateLaps();
+        }
+
+        function getShowTime() {
+            updatedTime = new Date().getTime();
+            difference = updatedTime - startTime;
+
+            let hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            let minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            hours = (hours < 10) ? "0" + hours : hours;
+            minutes = (minutes < 10) ? "0" + minutes : minutes;
+            seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+            display.innerHTML = hours + ":" + minutes + ":" + seconds;
+        }
+
+        function updateLaps() {
+            lapsList.innerHTML = laps.map((lap, index) => `<li>Lap ${index + 1}: ${lap}</li>`).join('');
+        }
+
+        startStopButton.addEventListener('click', startStopwatch);
+        lapButton.addEventListener('click', recordLap);
+        resetButton.addEventListener('click', resetStopwatch);
+    </script>
+</body>
+</html>
 
